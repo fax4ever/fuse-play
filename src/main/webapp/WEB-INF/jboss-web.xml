@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>fuse-eap-migration</context-root>
+</jboss-web>
