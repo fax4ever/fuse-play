@@ -16,6 +16,13 @@
         <property name="dataSource" ref="usecaseDB"/>
     </bean>
 
+    <!-- JMS ConnectionFactory -->
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="jmsConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="userName" value="admin"/>
+        <property name="password" value="admin"/>
+    </bean>
+
     <camelContext id="main" trace="false" xmlns="http://camel.apache.org/schema/spring">
 
         <propertyPlaceholder id="properties" location="camel.properties"/>

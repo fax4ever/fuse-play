@@ -5,8 +5,16 @@
        http://activemq.apache.org/schema/core/activemq-core.xsd">
 
     <broker brokerName="demo" xmlns="http://activemq.apache.org/schema/core">
+        <plugins>
+            <simpleAuthenticationPlugin>
+                <users>
+                    <authenticationUser username="admin" password="admin" groups="users,admins"/>
+                </users>
+            </simpleAuthenticationPlugin>
+        </plugins>
+
         <transportConnectors>
-            <transportConnector name="tcp" uri="tcp://localhost:61616" />
+            <transportConnector name="tcp" uri="tcp://localhost:61616"/>
         </transportConnectors>
     </broker>
 
