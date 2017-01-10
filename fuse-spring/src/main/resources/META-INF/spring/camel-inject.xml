@@ -11,6 +11,11 @@
         <route id="file-queue">
             <from uri="file:{{fileInput}}?fileName=customers.csv&amp;noop=true"/>
             <log message="original content from csv file :: ${body}"/>
+            <split>
+                <tokenize token="\n"/>
+                <log message="split ${property.CamelSplitIndex} :: ${body}"/>
+                <to uri="activemq:{{queueInput}}"/>
+            </split>
         </route>
 
     </camelContext>
