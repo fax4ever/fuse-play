@@ -113,6 +113,9 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-maven-plugin</artifactId>
+                <configuration>
+                    <applicationContextUri>META-INF/spring/*.xml;META-INF/spring/local/*.xml</applicationContextUri>
+                </configuration>
             </plugin>
         </plugins>
     </build>
