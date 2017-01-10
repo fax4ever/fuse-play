@@ -26,6 +26,50 @@
     <camelContext id="main" trace="false" xmlns="http://camel.apache.org/schema/spring">
 
         <propertyPlaceholder id="properties" location="camel.properties"/>
+        <endpoint id="javaToJson" uri="dozer:javaToJson?sourceModel=org.acme.Customer&amp;targetModel=account.Account&amp;marshalId=transform-json&amp;mappingFile=transformation.xml"/>
+        <dataFormats>
+            <bindy classType="org.acme.Customer" id="bindy" type="Csv"/>
+            <json id="transform-json" library="Jackson"/>
+        </dataFormats>
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <setHeader headerName="exe">
+                <simple>${exception.message}</simple>
+            </setHeader>
+            <to uri="direct:error"/>
+        </onException>
+
+        <route id="core">
+            <from uri="activemq:{{queueInput}}"/>
+            <unmarshal ref="bindy"/>
+            <log message="${body}"/>
+            <to uri="ref:javaToJson"/>
+            <log message="${body}"/>
+            <to uri="activemq:{{queueOutput}}"/>
+        </route>
+
+        <route id="direct-error-queue">
+            <from uri="direct:error"/>
+            <to uri="activemq:{{topicNotification}}"/>
+        </route>
+        <route id="topic-notification">
+            <from uri="activemq:{{topicNotification}}"/>
+            <log id="logWrongContent" message="Wrong Content :: ${body}"/>
+            <to uri="sql:INSERT INTO USECASE.T_ERROR (ERROR_CODE, ERROR_MESSAGE, MESSAGE, STATUS) VALUES (111, :#${header[exe]}, :#${body}, 'ERROR')"/>
+        </route>
+
+        <route id="recovery">
+            <from uri="sql:{{sql.selectError}}?onConsume={{sql.updateError}}"/>
+            <log id="logSql" message="${body}"/>
+            <setBody>
+                <simple>${body[MESSAGE]}</simple>
+            </setBody>
+            <log id="logRecoveryBody" message="${body}"/>
+            <to uri="activemq:{{queueInput}}"/>
+        </route>
 
     </camelContext>
 
