@@ -4,6 +4,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <!-- H2 DB -->
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="usecaseDB">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:tcp://localhost/~/ops/open/h2/local"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+    <!-- SQL Component & Datasource -->
+    <bean class="org.apache.camel.component.sql.SqlComponent" id="sql">
+        <property name="dataSource" ref="usecaseDB"/>
+    </bean>
+
     <camelContext id="main" trace="false" xmlns="http://camel.apache.org/schema/spring">
 
         <propertyPlaceholder id="properties" location="camel.properties"/>
